@@ -1,0 +1,211 @@
+@import "tailwindcss";
+
+:root {
+  --background: #080808;
+  --foreground: #FFFFFF;
+  --primary-bg: #080808;
+  --secondary-bg: #080808;
+  --card-surface: #0f0f0f;
+  --border-custom: rgba(255, 255, 255, 0.12);
+  --primary-accent: #00ff88;
+  --secondary-accent: #00ff88;
+  --highlight-glow: #00ff88;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A1A8B8;
+  --text-muted: #6B7280;
+}
+
+@theme inline {
+  --color-primary-bg: var(--primary-bg);
+  --color-secondary-bg: var(--secondary-bg);
+  --color-card-surface: var(--card-surface);
+  --color-border-custom: var(--border-custom);
+  --color-primary-accent: var(--primary-accent);
+  --color-secondary-accent: var(--secondary-accent);
+  --color-highlight-glow: var(--highlight-glow);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --font-sans: var(--font-geist), 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: var(--font-geist), sans-serif;
+}
+
+body {
+  background-color: var(--primary-bg);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  letter-spacing: -0.015em;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Custom interactive card styling with mouse tracking gradient */
+.glow-card {
+  position: relative;
+  background: #0A0D14;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  transition: border-color 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease;
+  overflow: hidden;
+}
+
+.glow-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background: radial-gradient(circle 350px at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255, 255, 255, 0.05), transparent 80%);
+  border-radius: 24px;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.glow-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5);
+}
+
+.glow-card:hover::before {
+  opacity: 1;
+}
+
+.glassmorphism {
+  background: #06090F;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animated grid lines */
+.grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.grid-glow {
+  background: radial-gradient(circle 800px at 50% 200px, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.005), transparent 70%);
+}
+
+.grid-glow-lab {
+  background: radial-gradient(circle 600px at 50% 50%, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.002), transparent 70%);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #030406;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Chrome/Safari utility for text clipping */
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Tactile organic grain texture overlay to destroy the artificial flat AI aesthetic */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  content: "";
+  opacity: 0.006;
+  pointer-events: none;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* ========== MOBILE FALLBACK — Force visibility for animated elements ========== */
+@media (max-width: 900px) {
+  /* Force animated section content to be visible — excludes nav/modals */
+  main section [style*="opacity: 0"],
+  main section [style*="opacity:0"] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Generic animation fallback classes (section content only) */
+  main [data-aos], main .aos-init, main .reveal, main .fade-in,
+  main .animated, main .gsap-animated, main .scroll-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  /* Reduce section vertical padding on mobile */
+  section {
+    padding-top: 4rem !important;
+    padding-bottom: 4rem !important;
+  }
+
+  /* Hero adjustments for mobile */
+  #home {
+    min-height: auto !important;
+    padding-top: 5rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  /* Hide the heavy Spline 3D canvas on mobile — it rarely renders */
+  #home canvas,
+  #home [class*="spline"],
+  #home iframe {
+    display: none !important;
+  }
+}
+
+/* Custom CSS fallback for mobile nav elements to avoid Tailwind v4 breakpoint conflicts */
+.mobile-hamburger-btn {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 8, 8, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 9999px !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.mobile-hamburger-btn:hover {
+  background: rgba(8, 8, 8, 0.85) !important;
+  border-color: rgba(0, 255, 136, 0.4) !important;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.25), 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+}
+
+.mobile-hamburger-btn:active {
+  transform: scale(0.92) !important;
+}
+
+.mobile-drawer {
+  display: flex !important;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+@media (min-width: 1024px) {
+  .mobile-hamburger-btn {
+    display: none !important;
+  }
+  .mobile-drawer {
+    display: none !important;
+  }
+}
+
+
