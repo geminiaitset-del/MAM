@@ -85,8 +85,12 @@ export default function Navbar() {
 
   return (
     <>
+      {/* Top bar: logo on the left, desktop nav on the right.
+          Logo is `absolute` on mobile to stay anchored on the left in BOTH LTR and RTL,
+          since flex-direction reversal in RTL would otherwise push it to the right edge
+          where it would collide with the hamburger button. */}
       <motion.nav
-        className={`fixed top-0 left-0 right-0 z-[1000] flex items-start pt-3 md:items-center md:pt-4 transition-all duration-300 h-[60px] md:h-auto ${
+        className={`fixed top-0 left-0 right-0 z-[1000] flex items-center transition-all duration-300 h-[60px] md:h-auto py-0 md:py-4 ${
           scrolled || isOpen
             ? "bg-[#080808]/95 backdrop-blur-md border-b border-white/[0.04]"
             : "bg-transparent md:bg-transparent bg-[#080808]/95 backdrop-blur-md md:backdrop-blur-none border-b border-white/[0.04] md:border-b-0"
@@ -95,9 +99,13 @@ export default function Navbar() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <div className="max-w-[1440px] w-full mx-auto px-6 lg:px-20 flex items-center justify-between">
-          {/* Logo Brand */}
-          <a href="#home" className="flex items-center gap-3 group">
+        <div className="relative max-w-[1440px] w-full mx-auto px-6 lg:px-20 flex items-center justify-between">
+          {/* Logo Brand — absolute on mobile (anchored left), static in flex flow on desktop */}
+          <a
+            href="#home"
+            aria-label="MAM Home"
+            className="absolute left-3 top-1/2 -translate-y-1/2 lg:static lg:translate-y-0 flex items-center gap-3 group"
+          >
             <MAMLogo size={42} />
           </a>
 
@@ -133,15 +141,19 @@ export default function Navbar() {
         </div>
       </motion.nav>
 
-      <div className="lg:hidden fixed top-3 left-[76px] z-[2000]">
+      {/* Mobile Language Button — physical `left` offset, stays on the left in LTR and RTL */}
+      <div className="lg:hidden fixed top-3 left-[76px] z-[2001]">
         {languageButton}
       </div>
 
-      {/* Detached Floating Hamburger Button for Mobile */}
+      {/* Detached Floating Hamburger Button — physical `right` offset, stays on the right in LTR and RTL.
+          z-[2001] places it above the nav (z-1000) and the mobile drawer (z-1100) so the icon
+          remains tappable even when the drawer is open. */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="mobile-hamburger-btn text-white transition-colors cursor-pointer fixed top-3 right-4 z-[2000] w-11 h-11"
+        className="mobile-hamburger-btn text-white transition-colors cursor-pointer fixed top-3 right-4 z-[2001] w-11 h-11"
         aria-label={t.nav.toggleMenu}
+        aria-expanded={isOpen}
       >
         <motion.div
           animate={{ rotate: isOpen ? 90 : 0 }}
