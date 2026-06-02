@@ -1,4 +1,5 @@
 import React from "react";
+import { LanguageProvider } from "@/components/LanguageProvider";
 import LoadingScreen from "@/components/LoadingScreen";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
@@ -14,7 +15,7 @@ import MobileFallback from "@/components/MobileFallback";
 
 export default function Home() {
   return (
-    <>
+    <LanguageProvider>
       {/* Premium loader */}
       <LoadingScreen />
 
@@ -53,6 +54,6 @@ export default function Home() {
 
       {/* Reusable corporate footer */}
       <Footer />
-    </>
+    </LanguageProvider>
   );
 }

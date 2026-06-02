@@ -33,9 +33,54 @@ body {
   background-color: var(--primary-bg);
   color: var(--foreground);
   font-family: var(--font-sans);
-  letter-spacing: -0.015em;
+  letter-spacing: 0;
   overflow-x: hidden;
   min-height: 100vh;
+}
+
+html[dir="rtl"] body {
+  font-family: var(--font-arabic), var(--font-geist), 'Segoe UI', Tahoma, sans-serif;
+}
+
+html[dir="rtl"] .font-display,
+html[dir="rtl"] .font-mono {
+  font-family: var(--font-arabic), var(--font-geist), 'Segoe UI', Tahoma, sans-serif;
+}
+
+html[dir="rtl"] body * {
+  letter-spacing: 0 !important;
+}
+
+html[dir="rtl"] main,
+html[dir="rtl"] footer,
+html[dir="rtl"] nav {
+  direction: rtl;
+}
+
+html[dir="rtl"] .text-left {
+  text-align: right;
+}
+
+html[dir="rtl"] .text-right {
+  text-align: left;
+}
+
+html[dir="rtl"] input,
+html[dir="rtl"] textarea,
+html[dir="rtl"] select {
+  direction: rtl;
+  text-align: right;
+}
+
+html[dir="rtl"] .rtl-ltr {
+  direction: ltr;
+  text-align: left;
+}
+
+@media (min-width: 1024px) {
+  html[dir="rtl"] .lg\:text-right {
+    text-align: left;
+  }
 }
 
 /* Custom interactive card styling with mouse tracking gradient */
@@ -110,6 +155,23 @@ body {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* Stats bar one-shot CSS animation — runs once on mount, never re-runs on locale change */
+@keyframes statFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stat-fade-in {
+  opacity: 0;
+  animation: statFadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Tactile organic grain texture overlay to destroy the artificial flat AI aesthetic */
@@ -207,5 +269,4 @@ body {
     display: none !important;
   }
 }
-
 

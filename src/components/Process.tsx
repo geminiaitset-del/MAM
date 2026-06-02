@@ -3,77 +3,40 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Search, Compass, Palette, Code, Rocket, TrendingUp } from "lucide-react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function Process() {
-  const steps = [
-    {
-      number: "01",
-      title: "Discover",
-      subtitle: "RESEARCH & SCOPE",
-      description:
-        "We dissect your vision, analyze target demographics, map existing technical boundaries, and scope precise operational objectives.",
-      icon: <Search className="w-6 h-6" style={{ stroke: "rgba(0, 255, 136, 0.4)" }} />,
-      color: "from-[#00ff88] to-[#00ff88]",
-    },
-    {
-      number: "02",
-      title: "Strategy",
-      subtitle: "SYSTEM DESIGN & ROADMAP",
-      description:
-        "We structure database schemas, select the optimal tech stack, architect AI agents, and outline an agile sprint schedule.",
-      icon: <Compass className="w-6 h-6" style={{ stroke: "rgba(0, 255, 136, 0.4)" }} />,
-      color: "from-[#00ff88] to-[#00ff88]",
-    },
-    {
-      number: "03",
-      title: "Design",
-      subtitle: "AESTHETICS & INTERACTION",
-      description:
-        "We craft high-fidelity luxury UI layouts, design glassmorphic graphics, specify micro-interactions, and compile standard design kits.",
-      icon: <Palette className="w-6 h-6" style={{ stroke: "rgba(0, 255, 136, 0.4)" }} />,
-      color: "from-[#00ff88] to-[#00ff88]",
-    },
-    {
-      number: "04",
-      title: "Develop",
-      subtitle: "ENGINEERING & INTEGRATION",
-      description:
-        "Our elite engineers draft high-performance TypeScript components, scale robust APIs, implement neural models, and secure configurations.",
-      icon: <Code className="w-6 h-6" style={{ stroke: "rgba(0, 255, 136, 0.4)" }} />,
-      color: "from-[#00ff88] to-[#00ff88]",
-    },
-    {
-      number: "05",
-      title: "Deploy",
-      subtitle: "CONFIDENT DEPLOYMENT",
-      description:
-        "We orchestrate containerized builds, configure global edge routing, audit database stability, and launch zero-downtime clusters.",
-      icon: <Rocket className="w-6 h-6" style={{ stroke: "rgba(0, 255, 136, 0.4)" }} />,
-      color: "from-[#00ff88] to-[#00ff88]",
-    },
-    {
-      number: "06",
-      title: "Scale",
-      subtitle: "OPTIMIZATION & ANALYSIS",
-      description:
-        "We monitor operational latency, optimize agent accuracy ratios, perform server audits, and continuously scale database operations.",
-      icon: <TrendingUp className="w-6 h-6" style={{ stroke: "rgba(0, 255, 136, 0.4)" }} />,
-      color: "from-[#00ff88] to-[#00ff88]",
-    },
+  const { t } = useLanguage();
+
+  const stepIcons = [
+    <Search key="search" className="w-6 h-6" style={{ stroke: "rgba(0, 255, 136, 0.4)" }} />,
+    <Compass key="compass" className="w-6 h-6" style={{ stroke: "rgba(0, 255, 136, 0.4)" }} />,
+    <Palette key="palette" className="w-6 h-6" style={{ stroke: "rgba(0, 255, 136, 0.4)" }} />,
+    <Code key="code" className="w-6 h-6" style={{ stroke: "rgba(0, 255, 136, 0.4)" }} />,
+    <Rocket key="rocket" className="w-6 h-6" style={{ stroke: "rgba(0, 255, 136, 0.4)" }} />,
+    <TrendingUp key="trend" className="w-6 h-6" style={{ stroke: "rgba(0, 255, 136, 0.4)" }} />,
   ];
+
+  const steps = t.process.steps.map((step, index) => ({
+    ...step,
+    number: String(index + 1).padStart(2, "0"),
+    icon: stepIcons[index],
+  }));
 
   return (
     <section id="process" className="relative py-28 bg-[#080808] overflow-hidden">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-20 relative z-10">
         {/* Header */}
         <div className="flex flex-col gap-4 mb-24 text-center items-center">
-          <span className="text-xs font-bold tracking-widest uppercase" style={{ color: "rgba(0, 255, 136, 0.5)" }}>OUR PROCESS</span>
+          <span className="text-xs font-bold tracking-widest uppercase" style={{ color: "rgba(0, 255, 136, 0.5)" }}>
+            {t.process.kicker}
+          </span>
           <h2 className="text-4xl md:text-5xl font-display font-black text-white tracking-tight uppercase leading-tight">
-            HOW WE BUILD <br />
-            GREAT DIGITAL PRODUCTS
+            {t.process.titleLine1} <br />
+            {t.process.titleLine2}
           </h2>
           <p className="text-text-secondary text-base leading-relaxed max-w-xl">
-            A meticulous, high-fidelity engineering workflow designed to bring complex applications and advanced AI intelligence to life.
+            {t.process.description}
           </p>
         </div>
 

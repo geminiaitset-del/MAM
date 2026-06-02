@@ -3,21 +3,23 @@
 import React, { useState, useEffect } from "react";
 import MAMLogo from "./MAMLogo";
 import { motion, AnimatePresence, Variants } from "framer-motion";
-import { Menu, X, ArrowUpRight } from "lucide-react";
+import { Menu, X, ArrowUpRight, Globe } from "lucide-react";
 import { GlowingShadow } from "@/components/ui/glowing-shadow";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { isArabic, t, toggleLocale } = useLanguage();
 
   const navLinks = [
-    { name: "Home", href: "#home" },
-    { name: "Services", href: "#services" },
-    { name: "AI Lab", href: "#ai-lab" },
-    { name: "Work", href: "#portfolio" },
-    { name: "Process", href: "#process" },
-    { name: "Tech Stack", href: "#tech-stack" },
-    { name: "Testimonials", href: "#testimonials" },
+    { name: t.nav.home, href: "#home" },
+    { name: t.nav.services, href: "#services" },
+    { name: t.nav.aiLab, href: "#ai-lab" },
+    { name: t.nav.work, href: "#portfolio" },
+    { name: t.nav.process, href: "#process" },
+    { name: t.nav.techStack, href: "#tech-stack" },
+    { name: t.nav.testimonials, href: "#testimonials" },
   ];
 
   useEffect(() => {
@@ -55,18 +57,31 @@ export default function Navbar() {
   };
 
   const linkVariants: Variants = {
-    hidden: { x: -20, opacity: 0 },
+    hidden: { x: isArabic ? 20 : -20, opacity: 0 },
     visible: {
       x: 0,
       opacity: 1,
       transition: { type: "spring", stiffness: 100, damping: 15 },
     },
     exit: {
-      x: 20,
+      x: isArabic ? -20 : 20,
       opacity: 0,
       transition: { duration: 0.15 },
     },
   };
+
+  const languageButton = (
+    <button
+      type="button"
+      onClick={toggleLocale}
+      title={t.common.languageToggleAria}
+      aria-label={t.common.languageToggleAria}
+      className="inline-flex items-center justify-center gap-2 h-10 min-w-10 px-3 rounded-full bg-white/[0.03] border border-white/[0.08] text-white/75 hover:text-white hover:border-[#00ff88]/40 hover:bg-[#00ff88]/[0.06] transition-all duration-300 font-bold text-[11px] font-mono"
+    >
+      <Globe size={14} />
+      <span>{t.common.languageButtonLabel}</span>
+    </button>
+  );
 
   return (
     <>
@@ -100,16 +115,17 @@ export default function Navbar() {
           </div>
 
           {/* Contact CTA Button (Desktop only) */}
-          <div className="hidden lg:block">
+          <div className="hidden lg:flex items-center gap-3">
+            {languageButton}
             <GlowingShadow>
               <motion.a
                 href="#contact"
-                className="relative inline-flex items-center gap-1.5 bg-white text-black hover:bg-white/90 px-6 py-2.5 rounded-full font-bold text-xs tracking-wider uppercase transition-all shadow-md shadow-white/5"
+                className="relative inline-flex items-center gap-1.5 bg-white text-black hover:bg-white/90 px-6 py-2.5 rounded-full font-bold text-xs tracking-wider uppercase transition-all shadow-md shadow-white/5 whitespace-nowrap"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 400, damping: 15 }}
               >
-                <span className="relative z-10">Start Project</span>
+                <span className="relative z-10">{t.common.startProject}</span>
                 <ArrowUpRight size={14} className="relative z-10" />
               </motion.a>
             </GlowingShadow>
@@ -117,11 +133,15 @@ export default function Navbar() {
         </div>
       </motion.nav>
 
+      <div className="lg:hidden fixed top-3 left-[76px] z-[2000]">
+        {languageButton}
+      </div>
+
       {/* Detached Floating Hamburger Button for Mobile */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="mobile-hamburger-btn text-white transition-colors cursor-pointer fixed top-3 right-4 z-[2000] w-11 h-11"
-        aria-label="Toggle menu"
+        aria-label={t.nav.toggleMenu}
       >
         <motion.div
           animate={{ rotate: isOpen ? 90 : 0 }}
@@ -147,7 +167,9 @@ export default function Navbar() {
             <div className="absolute -bottom-48 left-1/2 -translate-x-1/2 w-72 h-72 bg-[#00ff88]/[0.02] rounded-full blur-[100px] pointer-events-none" />
 
             <div className="flex flex-col gap-2 relative z-10">
-              <span className="text-[9px] font-mono text-white/30 tracking-[0.25em] uppercase mb-2 block">// NAVIGATION SYSTEMS</span>
+              <span className="text-[9px] font-mono text-white/30 tracking-[0.25em] uppercase mb-2 block">
+                {t.nav.navigationSystems}
+              </span>
               {navLinks.map((link, idx) => (
                 <motion.div key={link.name} variants={linkVariants}>
                   <a
@@ -170,15 +192,15 @@ export default function Navbar() {
               variants={linkVariants}
             >
               <div className="flex justify-between items-center text-[8px] font-mono text-white/35 tracking-widest uppercase">
-                <span>SYSTEM STATUS // OK</span>
-                <span>MAM COMPANY © 2026</span>
+                <span>{t.nav.systemStatus}</span>
+                <span>{t.nav.copyright}</span>
               </div>
               <a
                 href="#contact"
                 onClick={() => setIsOpen(false)}
                 className="bg-white text-black py-3.5 rounded-xl font-bold text-xs tracking-widest uppercase flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all duration-300 shadow-[0_4px_20px_rgba(255,255,255,0.08)]"
               >
-                Start Project <ArrowUpRight size={14} />
+                {t.common.startProject} <ArrowUpRight size={14} />
               </a>
             </motion.div>
           </motion.div>

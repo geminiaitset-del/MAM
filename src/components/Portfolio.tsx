@@ -4,10 +4,12 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 interface Project {
   title: string;
-  category: string;
+  categoryId: string;
+  categoryLabel: string;
   image: string;
   useLocalWebimg?: boolean;
   tech: string[];
@@ -17,94 +19,85 @@ interface Project {
 }
 
 export default function Portfolio() {
-  const [activeTab, setActiveTab] = useState("All");
+  const [activeTab, setActiveTab] = useState("all");
+  const { t } = useLanguage();
 
-  const categories = ["All", "AI", "Mobile Apps", "E-Commerce", "SaaS", "Enterprise"];
+  const projectCopy = t.portfolio.projects;
 
   const projects: Project[] = [
     {
-      title: "OmniAgent Platforms",
-      category: "AI",
+      ...projectCopy[0],
       image: "/webimg.png",
       useLocalWebimg: true,
       tech: ["OpenAI API", "Next.js", "LangChain", "Pinecone"],
-      outcome: "Automated 85% of Customer Queries",
-      description: "An autonomous multi-agent platform designed to resolve complex, multi-system enterprise customer support tasks in seconds.",
     },
     {
-      title: "ShopEase Storefronts",
-      category: "E-Commerce",
+      ...projectCopy[1],
       image: "",
       tech: ["React Native", "Next.js", "Stripe API", "PostgreSQL"],
-      outcome: "+142% Increase in Conversion",
-      description: "Next-generation digital storefront optimized with real-time recommendation engines, micro-second checkout systems, and sleek transitions.",
       customMockup: (
         <div className="flex flex-col gap-2 p-5 bg-[#030508]/80 border border-white/[0.06] rounded-2xl w-[80%] h-[70%] font-mono text-[9px] text-white/40 justify-center">
           <div className="flex justify-between border-b border-white/5 pb-2 text-[10px] text-white font-bold font-sans">
-            <span>Checkout Platform</span>
-            <span className="text-emerald-400 font-mono">ONLINE</span>
+            <span>{t.portfolio.mockups.checkoutPlatform}</span>
+            <span className="text-emerald-400 font-mono">{t.portfolio.mockups.online}</span>
           </div>
           <div className="flex justify-between mt-1">
-            <span>Auth Status</span>
-            <span className="text-white">APPROVED</span>
+            <span>{t.portfolio.mockups.authStatus}</span>
+            <span className="text-white">{t.portfolio.mockups.approved}</span>
           </div>
           <div className="flex justify-between">
-            <span>Tx Delay</span>
+            <span>{t.portfolio.mockups.txDelay}</span>
             <span className="text-white">12ms</span>
           </div>
           <div className="flex justify-between">
-            <span>Secure Gate</span>
+            <span>{t.portfolio.mockups.secureGate}</span>
             <span className="text-white">STRIPE_V3</span>
           </div>
         </div>
-      )
+      ),
     },
     {
-      title: "NovaCore Analytics",
-      category: "SaaS",
+      ...projectCopy[2],
       image: "",
       tech: ["TypeScript", "FastAPI", "MongoDB", "Docker"],
-      outcome: "40% Operational Efficiency Gain",
-      description: "A highly resilient cloud database dashboard aggregating business analytics and projecting growth trends using neural networks.",
       customMockup: (
         <div className="flex flex-col gap-2 p-5 bg-[#030508]/80 border border-white/[0.06] rounded-2xl w-[80%] h-[70%] text-left justify-center">
-          <span className="text-[9px] font-bold text-text-secondary tracking-widest font-mono uppercase">DATA MATRIX</span>
+          <span className="text-[9px] font-bold text-text-secondary tracking-widest font-mono uppercase">{t.portfolio.mockups.dataMatrix}</span>
           <div className="flex items-end gap-1 h-8 mt-1">
             {[30, 70, 50, 40, 90, 60, 80].map((h, i) => (
               <div key={i} className="w-full bg-white/20 rounded-xs" style={{ height: `${h}%` }} />
             ))}
           </div>
-          <span className="text-[8px] font-mono text-text-secondary mt-1">RETRIEVING DB_CLUSTERS...</span>
+          <span className="text-[8px] font-mono text-text-secondary mt-1">{t.portfolio.mockups.retrieving}</span>
         </div>
-      )
+      ),
     },
     {
-      title: "Apex Cloud Networks",
-      category: "Enterprise",
+      ...projectCopy[3],
       image: "",
       tech: ["Next.js", "AWS Cloud", "Python", "TensorFlow"],
-      outcome: "99.99% Uptime SLA",
-      description: "Secure, isolated core network infrastructure and ML-powered threat detection system engineered for global companies.",
       customMockup: (
         <div className="flex flex-col gap-2 p-5 bg-[#030508]/80 border border-white/[0.06] rounded-2xl w-[80%] h-[70%] font-mono text-[9px] text-white/40 justify-center">
-          <span className="text-[10px] text-white font-bold font-sans border-b border-white/5 pb-2 uppercase tracking-wider">Apex Shield Active</span>
+          <span className="text-[10px] text-white font-bold font-sans border-b border-white/5 pb-2 uppercase tracking-wider">
+            {t.portfolio.mockups.apexShield}
+          </span>
           <div className="flex justify-between mt-1">
-            <span>Threat Ratio</span>
+            <span>{t.portfolio.mockups.threatRatio}</span>
             <span className="text-emerald-400 font-bold">0.00%</span>
           </div>
           <div className="flex justify-between">
-            <span>Edge Nodes</span>
-            <span className="text-white">1,450 ACTIVE</span>
+            <span>{t.portfolio.mockups.edgeNodes}</span>
+            <span className="text-white">{t.portfolio.mockups.activeNodes}</span>
           </div>
         </div>
-      )
+      ),
     },
   ];
 
   const filteredProjects =
-    activeTab === "All"
+    activeTab === "all"
       ? projects
-      : projects.filter((project) => project.category === activeTab);
+      : projects.filter((project) => project.categoryId === activeTab);
 
   return (
     <section id="portfolio" className="relative py-32 bg-[#030508] overflow-hidden">
@@ -114,28 +107,28 @@ export default function Portfolio() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
           <div className="flex flex-col gap-4 max-w-xl">
-            <span className="text-xs font-bold text-white/40 tracking-widest uppercase font-mono">// PORTFOLIO</span>
+            <span className="text-xs font-bold text-white/40 tracking-widest uppercase font-mono">{t.portfolio.kicker}</span>
             <h2 className="text-4xl md:text-5xl font-display font-black text-white tracking-tight uppercase leading-[1.1]">
-              SOME PROJECTS WE ARE <br />
+              {t.portfolio.titleLine} <br />
               <span className="text-gradient bg-gradient-to-r from-white via-white to-white/40">
-                PROUD OF
+                {t.portfolio.titleHighlight}
               </span>
             </h2>
           </div>
 
           {/* Filter Tabs */}
           <div className="flex flex-wrap gap-2 self-start md:self-auto bg-white/[0.02] border border-white/[0.05] p-1.5 rounded-2xl backdrop-blur-md">
-            {categories.map((cat) => (
+            {t.portfolio.categories.map((cat) => (
               <button
-                key={cat}
-                onClick={() => setActiveTab(cat)}
+                key={cat.id}
+                onClick={() => setActiveTab(cat.id)}
                 className={`px-5 py-2.5 rounded-xl text-xs font-bold tracking-wider transition-all duration-300 ${
-                  activeTab === cat
+                  activeTab === cat.id
                     ? "bg-white text-black shadow-md shadow-white/5"
                     : "text-text-secondary hover:text-white"
                 }`}
               >
-                {cat}
+                {cat.label}
               </button>
             ))}
           </div>
@@ -144,7 +137,7 @@ export default function Portfolio() {
         {/* Projects Grid */}
         <motion.div layout className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project, idx) => (
+            {filteredProjects.map((project) => (
               <motion.div
                 key={project.title}
                 layout
@@ -180,7 +173,7 @@ export default function Portfolio() {
 
                   {/* Category chip */}
                   <div className="absolute top-4 left-4 bg-black/80 border border-white/[0.05] backdrop-blur-md px-3.5 py-1.5 rounded-full text-[9px] font-bold tracking-widest text-text-secondary uppercase">
-                    {project.category}
+                    {project.categoryLabel}
                   </div>
                 </div>
 
@@ -201,19 +194,19 @@ export default function Portfolio() {
 
                   {/* Tech stack chips */}
                   <div className="flex flex-wrap gap-2 pt-2 border-t border-white/[0.04]">
-                    {project.tech.map((t) => (
+                    {project.tech.map((item) => (
                       <span
-                        key={t}
+                        key={item}
                         className="bg-white/[0.02] border border-white/[0.05] px-3 py-1.5 rounded-lg text-[9px] font-bold text-text-secondary font-mono tracking-wider uppercase"
                       >
-                        {t}
+                        {item}
                       </span>
                     ))}
                   </div>
 
                   {/* Case Study button */}
                   <div className="mt-auto pt-6 border-t border-white/[0.04] flex items-center gap-2 text-[10px] font-bold tracking-widest text-text-secondary uppercase group-hover:text-white transition-colors duration-300 cursor-pointer">
-                    Explore Case Study
+                    {t.common.exploreCaseStudy}
                     <ArrowUpRight size={14} className="text-text-secondary group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300" />
                   </div>
                 </div>

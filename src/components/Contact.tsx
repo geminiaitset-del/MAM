@@ -1,27 +1,39 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, ArrowRight } from "lucide-react";
+import { useLanguage } from "@/components/LanguageProvider";
 
-// Form Zod validation schema
-const contactSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Invalid email address" }),
-  company: z.string().min(1, { message: "Company name is required" }),
-  projectType: z.string().min(1, { message: "Please select a project type" }),
-  budget: z.string().min(1, { message: "Please select a budget range" }),
-  message: z.string().min(10, { message: "Message must be at least 10 characters" }),
-});
-
-type ContactFormInputs = z.infer<typeof contactSchema>;
+type ContactFormInputs = {
+  name: string;
+  email: string;
+  company: string;
+  projectType: string;
+  budget: string;
+  message: string;
+};
 
 export default function Contact() {
+  const { t } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const contactSchema = useMemo(
+    () =>
+      z.object({
+        name: z.string().min(2, { message: t.contact.form.validation.name }),
+        email: z.string().email({ message: t.contact.form.validation.email }),
+        company: z.string().min(1, { message: t.contact.form.validation.company }),
+        projectType: z.string().min(1, { message: t.contact.form.validation.projectType }),
+        budget: z.string().min(1, { message: t.contact.form.validation.budget }),
+        message: z.string().min(10, { message: t.contact.form.validation.message }),
+      }),
+    [t]
+  );
 
   const {
     register,
@@ -33,105 +45,86 @@ export default function Contact() {
     defaultValues: {
       projectType: "",
       budget: "",
-    }
+    },
   });
 
-  const onSubmit = async (data: ContactFormInputs) => {
+  const onSubmit = async () => {
     setIsSubmitting(true);
-    // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 2000));
     setIsSubmitting(false);
     setSubmitSuccess(true);
     reset();
   };
 
-  const projectTypes = [
-    "AI Agent Integrations",
-    "Mobile Applications",
-    "SaaS Platform",
-    "E-Commerce Solutions",
-    "Custom Enterprise Software",
-    "Digital Transformation",
-  ];
+  const projectTypes = t.contact.form.projectTypes;
+  const budgets = t.contact.form.budgets;
 
-  const budgets = ["< $10,000", "$10,000 - $25,000", "$25,000 - $50,000", "$50,000+"];
+  const contactInfo = t.contact.info;
 
   return (
     <section id="contact" className="relative py-28 bg-[#080808] overflow-hidden">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-20 relative z-10">
-        {/* Header */}
         <div className="flex flex-col gap-4 mb-20 text-center items-center">
-          <span className="text-xs font-bold tracking-widest uppercase" style={{ color: "rgba(0, 255, 136, 0.5)" }}>GET IN TOUCH</span>
+          <span className="text-xs font-bold tracking-widest uppercase" style={{ color: "rgba(0, 255, 136, 0.5)" }}>
+            {t.contact.kicker}
+          </span>
           <h2 className="text-4xl md:text-5xl font-display font-black text-white tracking-tight uppercase leading-tight">
-            LET'S BUILD SOMETHING <br />
-            AMAZING TOGETHER
+            {t.contact.titleLine1} <br />
+            {t.contact.titleLine2}
           </h2>
           <p className="text-text-secondary text-base leading-relaxed max-w-xl">
-            Have a project in mind? Fill out the contact form below and let us discuss how to build it perfectly.
+            {t.contact.description}
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          {/* Left Column: Contact details */}
           <div className="lg:col-span-5 flex flex-col gap-8">
             <div className="glow-card p-8 flex flex-col gap-6" style={{ background: "#0f0f0f", border: "1px solid rgba(255,255,255,0.07)" }}>
               <h3 className="text-xl font-bold text-white tracking-tight border-b border-white/5 pb-4">
-                Contact Information
+                {t.contact.informationTitle}
               </h3>
 
               <div className="flex flex-col gap-6">
-                {[
-                  {
-                    icon: <Mail className="w-5 h-5" style={{ stroke: "rgba(0, 255, 136, 0.5)" }} />,
-                    title: "Email",
-                    value: "hello@mamcompany.com",
-                    href: "mailto:hello@mamcompany.com",
-                  },
-                  {
-                    icon: <Phone className="w-5 h-5" style={{ stroke: "rgba(0, 255, 136, 0.5)" }} />,
-                    title: "Phone",
-                    value: "+1 (234) 567-8900",
-                    href: "tel:+12345678900",
-                  },
-                  {
-                    icon: <MapPin className="w-5 h-5" style={{ stroke: "rgba(0, 255, 136, 0.5)" }} />,
-                    title: "Location",
-                    value: "Remote / Worldwide",
-                    href: "#",
-                  },
-                  {
-                    icon: <Clock className="w-5 h-5" style={{ stroke: "rgba(0, 255, 136, 0.5)" }} />,
-                    title: "Working Hours",
-                    value: "24/7 Available",
-                    href: "#",
-                  },
-                ].map((item, idx) => (
-                  <div key={idx} className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center flex-shrink-0">
-                      {item.icon}
+                {contactInfo.map((item, idx) => {
+                  const icons = [
+                    <Mail key="mail" className="w-5 h-5" style={{ stroke: "rgba(0, 255, 136, 0.5)" }} />,
+                    <Phone key="phone" className="w-5 h-5" style={{ stroke: "rgba(0, 255, 136, 0.5)" }} />,
+                    <MapPin key="map" className="w-5 h-5" style={{ stroke: "rgba(0, 255, 136, 0.5)" }} />,
+                    <Clock key="clock" className="w-5 h-5" style={{ stroke: "rgba(0, 255, 136, 0.5)" }} />,
+                  ];
+                  const hrefs = [
+                    `mailto:${item.value}`,
+                    `tel:${item.value.replace(/[^+\d]/g, "")}`,
+                    "#",
+                    "#",
+                  ];
+                  return (
+                    <div key={idx} className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center flex-shrink-0">
+                        {icons[idx]}
+                      </div>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-text-secondary text-xs uppercase tracking-wider font-semibold font-mono">
+                          {item.title}
+                        </span>
+                        {hrefs[idx] !== "#" ? (
+                          <a
+                            href={hrefs[idx]}
+                            className="text-white hover:text-white/80 transition-colors text-sm font-semibold"
+                          >
+                            {item.value}
+                          </a>
+                        ) : (
+                          <span className="text-white text-sm font-semibold">{item.value}</span>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-text-secondary text-xs uppercase tracking-wider font-semibold font-mono">
-                        {item.title}
-                      </span>
-                      {item.href !== "#" ? (
-                        <a
-                          href={item.href}
-                          className="text-white hover:text-white/80 transition-colors text-sm font-semibold"
-                        >
-                          {item.value}
-                        </a>
-                      ) : (
-                        <span className="text-white text-sm font-semibold">{item.value}</span>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
 
-          {/* Right Column: Premium Form */}
           <div className="lg:col-span-7">
             <div className="glow-card p-8 md:p-10 relative overflow-hidden" style={{ background: "#0f0f0f", border: "1px solid rgba(255,255,255,0.07)" }}>
               <AnimatePresence mode="wait">
@@ -144,15 +137,14 @@ export default function Contact() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    {/* Name & Email Group */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="flex flex-col gap-2">
                         <label className="text-xs font-semibold text-text-secondary uppercase tracking-widest font-mono">
-                          Your Name
+                          {t.contact.form.labels.name}
                         </label>
                         <input
                           type="text"
-                          placeholder="e.g. John Doe"
+                          placeholder={t.contact.form.placeholders.name}
                           {...register("name")}
                           className="bg-[#080808] border focus:border-white/30 focus:ring-1 focus:ring-white/30 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/20 outline-none transition-all duration-300"
                           style={{ borderColor: "rgba(255, 255, 255, 0.08)" }}
@@ -164,11 +156,11 @@ export default function Contact() {
 
                       <div className="flex flex-col gap-2">
                         <label className="text-xs font-semibold text-text-secondary uppercase tracking-widest font-mono">
-                          Email Address
+                          {t.contact.form.labels.email}
                         </label>
                         <input
                           type="email"
-                          placeholder="e.g. john@company.com"
+                          placeholder={t.contact.form.placeholders.email}
                           {...register("email")}
                           className="bg-[#080808] border focus:border-white/30 focus:ring-1 focus:ring-white/30 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/20 outline-none transition-all duration-300"
                           style={{ borderColor: "rgba(255, 255, 255, 0.08)" }}
@@ -179,15 +171,14 @@ export default function Contact() {
                       </div>
                     </div>
 
-                    {/* Company & Project Type */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="flex flex-col gap-2">
                         <label className="text-xs font-semibold text-text-secondary uppercase tracking-widest font-mono">
-                          Company Name
+                          {t.contact.form.labels.company}
                         </label>
                         <input
                           type="text"
-                          placeholder="e.g. ShopEase LLC"
+                          placeholder={t.contact.form.placeholders.company}
                           {...register("company")}
                           className="bg-[#080808] border focus:border-white/30 focus:ring-1 focus:ring-white/30 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/20 outline-none transition-all duration-300"
                           style={{ borderColor: "rgba(255, 255, 255, 0.08)" }}
@@ -199,7 +190,7 @@ export default function Contact() {
 
                       <div className="flex flex-col gap-2">
                         <label className="text-xs font-semibold text-text-secondary uppercase tracking-widest font-mono">
-                          Project Type
+                          {t.contact.form.labels.projectType}
                         </label>
                         <select
                           {...register("projectType")}
@@ -207,11 +198,11 @@ export default function Contact() {
                           style={{ borderColor: "rgba(255, 255, 255, 0.08)" }}
                         >
                           <option value="" disabled className="bg-[#0f0f0f] text-white/30">
-                            Select Category
+                            {t.contact.form.placeholders.projectType}
                           </option>
                           {projectTypes.map((type) => (
-                            <option key={type} value={type} className="bg-[#0f0f0f] text-white">
-                              {type}
+                            <option key={type.value} value={type.value} className="bg-[#0f0f0f] text-white">
+                              {type.label}
                             </option>
                           ))}
                         </select>
@@ -223,10 +214,9 @@ export default function Contact() {
                       </div>
                     </div>
 
-                    {/* Budget Select */}
                     <div className="flex flex-col gap-2">
                       <label className="text-xs font-semibold text-text-secondary uppercase tracking-widest font-mono">
-                        Estimated Budget
+                        {t.contact.form.labels.budget}
                       </label>
                       <select
                         {...register("budget")}
@@ -234,11 +224,11 @@ export default function Contact() {
                         style={{ borderColor: "rgba(255, 255, 255, 0.08)" }}
                       >
                         <option value="" disabled className="bg-[#0f0f0f] text-white/30">
-                          Select Range
+                          {t.contact.form.placeholders.budget}
                         </option>
                         {budgets.map((b) => (
-                          <option key={b} value={b} className="bg-[#0f0f0f] text-white">
-                            {b}
+                          <option key={b.value} value={b.value} className="bg-[#0f0f0f] text-white">
+                            {b.label}
                           </option>
                         ))}
                       </select>
@@ -247,14 +237,13 @@ export default function Contact() {
                       )}
                     </div>
 
-                    {/* Message Box */}
                     <div className="flex flex-col gap-2">
                       <label className="text-xs font-semibold text-text-secondary uppercase tracking-widest font-mono">
-                        Tell us about your project
+                        {t.contact.form.labels.message}
                       </label>
                       <textarea
                         rows={4}
-                        placeholder="Please details key feature needs, database expectations, or AI capabilities requested..."
+                        placeholder={t.contact.form.placeholders.message}
                         {...register("message")}
                         className="bg-[#080808] border focus:border-white/30 focus:ring-1 focus:ring-white/30 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/20 outline-none transition-all duration-300 resize-none"
                         style={{ borderColor: "rgba(255, 255, 255, 0.08)" }}
@@ -264,7 +253,6 @@ export default function Contact() {
                       )}
                     </div>
 
-                    {/* Submit Button */}
                     <motion.button
                       type="submit"
                       disabled={isSubmitting}
@@ -279,17 +267,16 @@ export default function Contact() {
                       {isSubmitting ? (
                         <>
                           <span className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                          Sending...
+                          {t.contact.form.sending}
                         </>
                       ) : (
                         <>
-                          Send Message <Send size={14} />
+                          {t.contact.form.submit} <Send size={14} />
                         </>
                       )}
                     </motion.button>
                   </motion.form>
                 ) : (
-                  // Elegant success state card!
                   <motion.div
                     key="success"
                     className="flex flex-col items-center justify-center text-center py-10 gap-6"
@@ -306,9 +293,9 @@ export default function Contact() {
                     </motion.div>
 
                     <div className="flex flex-col gap-2">
-                      <h4 className="text-2xl font-bold text-white tracking-tight uppercase">MESSAGE SENT SUCCESSFULLY!</h4>
+                      <h4 className="text-2xl font-bold text-white tracking-tight uppercase">{t.contact.success.title}</h4>
                       <p className="text-text-secondary text-sm max-w-sm">
-                        Thank you for reaching out, master. Our lead architect will review your design specifications and contact you within 12 hours.
+                        {t.contact.success.description}
                       </p>
                     </div>
 
@@ -317,7 +304,7 @@ export default function Contact() {
                       className="inline-flex items-center gap-2 bg-white/5 border border-white/10 hover:border-white/20 text-white px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all"
                       whileHover={{ scale: 1.05 }}
                     >
-                      Submit Another Query <ArrowRight size={14} />
+                      {t.contact.success.action} <ArrowRight size={14} />
                     </motion.button>
                   </motion.div>
                 )}

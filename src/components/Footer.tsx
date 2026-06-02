@@ -4,68 +4,29 @@ import React from "react";
 import MAMLogo from "./MAMLogo";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-
-  const columns = [
-    {
-      title: "COMPANY",
-      links: [
-        { name: "About Us", href: "#home" },
-        { name: "Our Team", href: "#home" },
-        { name: "Careers", href: "#home" },
-        { name: "Blog", href: "#home" },
-      ],
-    },
-    {
-      title: "SERVICES",
-      links: [
-        { name: "Mobile Apps", href: "#services" },
-        { name: "E-Commerce", href: "#services" },
-        { name: "AI Solutions", href: "#services" },
-        { name: "Web Development", href: "#services" },
-        { name: "UI/UX Design", href: "#services" },
-      ],
-    },
-    {
-      title: "WORK",
-      links: [
-        { name: "All Projects", href: "#portfolio" },
-        { name: "Case Studies", href: "#portfolio" },
-        { name: "Our Process", href: "#process" },
-      ],
-    },
-    {
-      title: "RESOURCES",
-      links: [
-        { name: "Articles", href: "#home" },
-        { name: "FAQ", href: "#home" },
-        { name: "Privacy Policy", href: "#home" },
-        { name: "Terms of Service", href: "#home" },
-      ],
-    },
-  ];
+  const { t } = useLanguage();
+  const columns = t.footer.columns;
 
   return (
     <footer className="relative bg-[#080808] border-t border-white/5 pt-20 pb-10 overflow-hidden">
-      {/* Decorative radial lighting in background */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-gradient-to-t from-primary-accent/10 to-transparent blur-[120px] pointer-events-none rounded-full" />
 
       <div className="max-w-[1440px] mx-auto px-6 lg:px-20 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 pb-16 border-b border-white/5">
-          {/* Company Brand Column */}
           <div className="lg:col-span-4 flex flex-col gap-6">
             <a href="#home" className="flex items-center gap-3 self-start">
               <MAMLogo size={46} />
-              <span className="text-2xl font-bold tracking-widest text-white">MAM</span>
+              <span className="text-2xl font-bold tracking-widest text-white">{t.footer.brand}</span>
             </a>
             <p className="text-text-secondary text-sm max-w-sm leading-relaxed">
-              MAM Company is a software engineering studio specialized in building cutting-edge digital products, premium mobile/web platforms, and advanced AI agents.
+              {t.footer.description}
             </p>
           </div>
 
-          {/* Quick Links Columns */}
           <div className="lg:col-span-5 grid grid-cols-2 md:grid-cols-4 gap-8">
             {columns.map((col) => (
               <div key={col.title} className="flex flex-col gap-4">
@@ -86,11 +47,10 @@ export default function Footer() {
             ))}
           </div>
 
-          {/* CTA Ready Column */}
           <div className="lg:col-span-3 flex flex-col gap-6 lg:items-end">
             <div className="flex flex-col gap-2 lg:text-right">
-              <span className="text-xs font-bold text-text-secondary tracking-widest">READY TO START YOUR PROJECT?</span>
-              <h4 className="text-lg font-semibold text-white">Let's create something world-class.</h4>
+              <span className="text-xs font-bold text-text-secondary tracking-widest">{t.footer.ctaKicker}</span>
+              <h4 className="text-lg font-semibold text-white">{t.footer.ctaTitle}</h4>
             </div>
             <motion.a
               href="#contact"
@@ -98,18 +58,16 @@ export default function Footer() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              Let's Talk <ArrowUpRight size={14} />
+              {t.footer.ctaAction} <ArrowUpRight size={14} />
             </motion.a>
           </div>
         </div>
 
-        {/* Footer Bottom info */}
         <div className="pt-10 flex flex-col sm:flex-row items-center justify-between gap-6">
           <p className="text-text-secondary text-xs">
-            © {currentYear} MAM Company. All rights reserved.
+            © {currentYear} {t.footer.brand} {t.footer.rights}
           </p>
 
-          {/* Social Links */}
           <div className="flex items-center gap-6">
             {[
               {

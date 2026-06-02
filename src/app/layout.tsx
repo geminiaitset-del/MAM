@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Geist, IBM_Plex_Sans_Arabic } from "next/font/google";
 import "./globals.css";
 
 const geist = Geist({
   subsets: ["latin"],
   variable: "--font-geist",
+  display: "swap",
+});
+
+const arabicSans = IBM_Plex_Sans_Arabic({
+  subsets: ["arabic", "latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-arabic",
   display: "swap",
 });
 
@@ -49,7 +56,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geist.variable} h-full antialiased dark scroll-smooth`}
+      className={`${geist.variable} ${arabicSans.variable} h-full antialiased dark scroll-smooth`}
       style={{ colorScheme: "dark" }}
     >
       <body className="min-h-full flex flex-col bg-[#080808] text-white antialiased">

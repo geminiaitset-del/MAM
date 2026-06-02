@@ -1,32 +1,47 @@
 "use client";
 
-import React from "react";
-import { motion, Variants } from "framer-motion";
+import React, { useEffect } from "react";
+import { motion, useAnimationControls, Variants } from "framer-motion";
 import { ArrowRight, Layers, Cpu, Award, Globe } from "lucide-react";
 import { SplineScene } from "./ui/splite";
 import { LogoCloud, heroLogos } from "@/components/ui/logo-cloud-3";
 import { GlowCard } from "@/components/ui/spotlight-card";
+import { useLanguage } from "@/components/LanguageProvider";
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const fadeUpVariants: Variants = {
+  hidden: { opacity: 0, y: 25 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 100, damping: 20 },
+  },
+};
 
 export default function Hero() {
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.1,
-      },
-    },
-  };
+  const { isArabic, t } = useLanguage();
+  const controls = useAnimationControls();
 
-  const fadeUpVariants: Variants = {
-    hidden: { opacity: 0, y: 25 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { type: "spring", stiffness: 100, damping: 20 },
-    },
-  };
+  useEffect(() => {
+    controls.start("visible");
+  }, [controls]);
+
+  const statIcons = [
+    <Layers key="layers" size={13} className="text-white/30" />,
+    <Cpu key="cpu" size={13} className="text-white/30" />,
+    <Award key="award" size={13} className="text-white/30" />,
+    <Globe key="globe" size={13} className="text-white/30" />,
+  ];
 
   return (
     <section
@@ -66,18 +81,22 @@ export default function Hero() {
           className="w-full lg:w-[48%] flex flex-col gap-8 text-left"
           variants={containerVariants}
           initial="hidden"
-          animate="visible"
+          animate={controls}
         >
           {/* Headline: Massive Engineering Statement */}
           <motion.h1
             className="font-display font-black tracking-tighter text-white uppercase"
-            style={{ fontSize: "clamp(2.5rem, 6vw, 5.5rem)", lineHeight: 0.95, letterSpacing: "-0.02em" }}
+            style={{
+              fontSize: "clamp(2.5rem, 6vw, 5.5rem)",
+              lineHeight: isArabic ? 1.08 : 0.95,
+              letterSpacing: 0,
+            }}
             variants={fadeUpVariants}
           >
-            <span style={{ display: "block", whiteSpace: "nowrap" }}>Engineering</span>
-            <span style={{ display: "block", whiteSpace: "nowrap" }}>The Future Of</span>
+            <span style={{ display: "block", whiteSpace: "nowrap" }}>{t.hero.headline[0]}</span>
+            <span style={{ display: "block", whiteSpace: "nowrap" }}>{t.hero.headline[1]}</span>
             <span className="text-gradient bg-gradient-to-r from-white via-[#A1A8B8] to-white/30" style={{ display: "block" }}>
-              Intelligence
+              {t.hero.headline[2]}
             </span>
           </motion.h1>
 
@@ -87,7 +106,7 @@ export default function Hero() {
             style={{ fontSize: "clamp(1rem, 1.8vw, 1.2rem)", lineHeight: 1.6 }}
             variants={fadeUpVariants}
           >
-            We design and engineer advanced AI systems, enterprise software, and scalable digital products for ambitious businesses worldwide.
+            {t.hero.subtitle}
           </motion.p>
 
           {/* CTA Buttons */}
@@ -101,7 +120,7 @@ export default function Hero() {
               whileHover={{ scale: 1.03, y: -2 }}
               whileTap={{ scale: 0.97 }}
             >
-              Start Your Project
+              {t.common.startYourProject}
               <ArrowRight size={15} />
             </motion.a>
 
@@ -111,35 +130,33 @@ export default function Hero() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
             >
-              Explore Our Work
+              {t.hero.exploreWork}
             </motion.a>
           </motion.div>
 
           {/* Spacing spacer */}
           <div className="h-2" />
 
-          {/* Trust Bar metrics — GlowCard Version */}
-          <motion.div
-            className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-8 border-t border-white/[0.06] max-w-2xl w-full"
-            variants={fadeUpVariants}
-          >
-            {[
-              { value: "50+", label: "Projects Delivered", icon: <Layers size={13} className="text-white/30" /> },
-              { value: "15+", label: "AI Systems Built", icon: <Cpu size={13} className="text-white/30" /> },
-              { value: "98%", label: "Satisfaction", icon: <Award size={13} className="text-white/30" /> },
-              { value: "24/7", label: "Tech Support", icon: <Globe size={13} className="text-white/30" /> },
-            ].map((stat, idx) => (
-              <GlowCard key={idx} glowColor="green" className="min-h-[90px] w-full flex flex-col justify-between p-4">
-                <div className="flex justify-between items-center w-full">
-                  <span className="text-xl font-black text-white font-display leading-none">{stat.value}</span>
-                  {stat.icon}
-                </div>
-                <span className="text-[9px] text-[#A1A8B8] uppercase tracking-widest font-semibold font-mono leading-none mt-3">
-                  {stat.label}
-                </span>
-              </GlowCard>
+          {/* Trust Bar metrics — GlowCard Version (CSS animation, runs once on mount) */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-8 border-t border-white/[0.06] max-w-2xl w-full">
+            {t.hero.stats.map((stat, idx) => (
+              <div
+                key={idx}
+                className="stat-fade-in"
+                style={{ animationDelay: `${0.4 + idx * 0.12}s` }}
+              >
+                <GlowCard glowColor="green" className="min-h-[90px] w-full flex flex-col justify-between p-4">
+                  <div className="flex justify-between items-center w-full">
+                    <span className="text-xl font-black text-white font-display leading-none">{stat.value}</span>
+                    {statIcons[idx]}
+                  </div>
+                  <span className="text-[9px] text-[#A1A8B8] uppercase tracking-widest font-semibold font-mono leading-none mt-3">
+                    {stat.label}
+                  </span>
+                </GlowCard>
+              </div>
             ))}
-          </motion.div>
+          </div>
 
           {/* Infinite Logo Slider */}
           <motion.div
