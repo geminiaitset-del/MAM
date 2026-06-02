@@ -86,7 +86,7 @@ export default function Navbar() {
   return (
     <>
       <motion.nav
-        className={`fixed top-0 left-0 right-0 z-[1000] flex items-center transition-all duration-300 h-[60px] md:h-auto py-0 md:py-4 ${
+        className={`fixed top-0 left-0 right-0 z-[1000] flex items-start pt-3 md:items-center md:pt-4 transition-all duration-300 h-[60px] md:h-auto ${
           scrolled || isOpen
             ? "bg-[#080808]/95 backdrop-blur-md border-b border-white/[0.04]"
             : "bg-transparent md:bg-transparent bg-[#080808]/95 backdrop-blur-md md:backdrop-blur-none border-b border-white/[0.04] md:border-b-0"
